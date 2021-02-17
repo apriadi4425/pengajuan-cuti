@@ -5,10 +5,12 @@ import {
   TheFooter,
   TheHeader
 } from './index'
+import {Redirect} from 'react-router-dom'
 
 const TheLayout = () => {
 
   return (
+    localStorage.getItem('login') ?
     <div className="c-app c-default-layout">
       <TheSidebar/>
       <div className="c-wrapper">
@@ -18,7 +20,7 @@ const TheLayout = () => {
         </div>
         <TheFooter/>
       </div>
-    </div>
+    </div> : <Redirect to={'/login'}/>
   )
 }
 

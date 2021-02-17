@@ -8,8 +8,14 @@ import {
   CImg
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
+import { withRouter } from 'react-router-dom';
 
-const TheHeaderDropdown = () => {
+const TheHeaderDropdown = ({history}) => {
+  const CobaLogout = () => {
+    localStorage.clear();
+    history.push('/login');
+  }
+
   return (
     <CDropdown
       inNav
@@ -80,7 +86,7 @@ const TheHeaderDropdown = () => {
           <CBadge color="primary" className="mfs-auto">42</CBadge>
         </CDropdownItem>
         <CDropdownItem divider />
-        <CDropdownItem>
+        <CDropdownItem onClick={CobaLogout}>
           <CIcon name="cil-lock-locked" className="mfe-2" />
           Lock Account
         </CDropdownItem>
@@ -89,4 +95,4 @@ const TheHeaderDropdown = () => {
   )
 }
 
-export default TheHeaderDropdown
+export default withRouter(TheHeaderDropdown)

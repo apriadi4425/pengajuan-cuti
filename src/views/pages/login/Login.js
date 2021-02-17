@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { Link } from 'react-router-dom'
 import {
   CButton,
@@ -15,8 +15,44 @@ import {
   CRow
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
+import { withRouter } from 'react-router-dom';
+import axios from 'axios';
+import swal from 'sweetalert';
 
-const Login = () => {
+
+const Login = ({history}) => {
+  const [Loading, setLoading] = useState(false);
+  const [Form, setForm] = useState({ username : '', password : ''});
+
+  const HandleForm = (e) => {
+    setForm({...Form, [e.target.name] : e.target.value})
+  }
+
+  const CobaLogin = async () => {
+    setLoading(true);
+    await axios({
+      method: 'post',
+      url: `${process.env.REACT_APP_BASE_URL}/api/auth/login`,
+      data: Form,
+      config: { headers: {
+          'Accept': 'application/json'
+        }}
+    }).then(res => {
+      localStorage.setItem('login', true);
+      localStorage.setItem('token', res.data.data.token);
+      history.push('/')
+    }).catch(function (error) {
+      if(error.response && error.response.status === 401){
+        swal({
+          title: "Perhatian",
+          text: "Username atau password salah!",
+          icon: "error",
+        });
+      }
+    });
+    setLoading(false);
+  }
+
   return (
     <div className="c-app c-default-layout flex-row align-items-center">
       <CContainer>
@@ -34,7 +70,7 @@ const Login = () => {
                           <CIcon name="cil-user" />
                         </CInputGroupText>
                       </CInputGroupPrepend>
-                      <CInput type="text" placeholder="Username" autoComplete="username" />
+                      <CInput type="text" name={'username'} value={Form.username} onChange={HandleForm} placeholder="Username" autoComplete="username" />
                     </CInputGroup>
                     <CInputGroup className="mb-4">
                       <CInputGroupPrepend>
@@ -42,11 +78,11 @@ const Login = () => {
                           <CIcon name="cil-lock-locked" />
                         </CInputGroupText>
                       </CInputGroupPrepend>
-                      <CInput type="password" placeholder="Password" autoComplete="current-password" />
+                      <CInput type="password" name={'password'} value={Form.password} onChange={HandleForm} placeholder="Password" autoComplete="current-password" />
                     </CInputGroup>
                     <CRow>
                       <CCol xs="6">
-                        <CButton color="primary" className="px-4">Login</CButton>
+                        <CButton disabled={Loading} onClick={CobaLogin} color="primary" className="px-4">{Loading ? 'Loading...' : 'Login'}</CButton>
                       </CCol>
                       <CCol xs="6" className="text-right">
                         <CButton color="link" className="px-0">Forgot password?</CButton>
@@ -75,4 +111,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default withRouter(Login)
