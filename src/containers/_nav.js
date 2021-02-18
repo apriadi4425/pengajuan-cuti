@@ -1,5 +1,7 @@
 import React from 'react'
 import CIcon from '@coreui/icons-react'
+import Icon from 'awesome-react-icons';
+
 
 const _nav =  [
   {
@@ -11,6 +13,16 @@ const _nav =  [
       color: 'info',
       text: 'NEW',
     }
+  },
+  {
+    _tag: 'CSidebarNavTitle',
+    _children: ['Konfigurasi']
+  },
+  {
+    _tag: 'CSidebarNavItem',
+    name: 'Konfigurasi Pegawai',
+    to: '/konfigurasi/user',
+    icon: <Icon name="user" className='mr-3'/>,
   },
   {
     _tag: 'CSidebarNavTitle',
