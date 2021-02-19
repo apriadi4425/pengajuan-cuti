@@ -6,6 +6,7 @@ import {
 import {fields, getBadge} from './helper'
 import ModalTambahUser from "./ModalTambahUser";
 import axios from "axios";
+import swal from 'sweetalert';
 
 const UserKonfigurasi = () => {
   const Token = JSON.parse(localStorage.getItem('token'));
@@ -13,11 +14,19 @@ const UserKonfigurasi = () => {
   const [details, setDetails] = useState([])
   const [Loading, setLoading] = useState(true)
 
-  //state modal
+  const [initialValues, setinitialValues] = useState(null)
+
+  //state modal tambah
   const [Modal, setModal] = useState(false);
   const ToggleModal = useCallback(() => {
     setModal(!Modal)
   }, [Modal])
+
+  //state modal edit
+  const [ModalEdit, setModalEdit] = useState(false);
+  const ToggleModalEdit = useCallback(() => {
+    setModalEdit(!ModalEdit)
+  }, [ModalEdit])
 
   const toggleDetails = (index) => {
     const position = details.indexOf(index)
@@ -33,7 +42,7 @@ const UserKonfigurasi = () => {
   const GetData = useCallback(async () => {
     await axios({
       method : 'get',
-      url : `${process.env.REACT_APP_BASE_URL}/api/user/all`,
+      url : `${process.env.REACT_APP_BASE_URL}/api/user`,
       headers: {
         Accept: 'application/json',
         Authorization: `Bearer ${Token}`,
@@ -46,9 +55,47 @@ const UserKonfigurasi = () => {
     setLoading(false)
   },[])
 
+  const ValidasiDelete = (IdUser) => {
+    swal({
+      title: "Anda Yakin?",
+      text: "Ketika dihapus data tidak akan bisa kembali lagi",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    })
+      .then((willDelete) => {
+        if (willDelete) {
+          DeleteUser(IdUser)
+        } else {
+          swal("Data tidak jadi dihapus");
+        }
+      });
+  }
+
+  const DeleteUser = async (IdUser) => {
+    setLoading(true)
+    await axios({
+      method : 'delete',
+      url : `${process.env.REACT_APP_BASE_URL}/api/user`,
+      data : {id : IdUser},
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${Token}`,
+      },
+    }).then(async res => {
+       await GetData();
+        swal("Berhasil, data berhasil dihapus", {
+          icon: "success",
+        });
+    }).catch(err => {
+      console.log(err)
+    });
+    setLoading(false)
+  }
+
   useEffect(() => {
     GetData()
-  }, [])
+  }, [GetData])
 
   return(
     <>
@@ -91,9 +138,9 @@ const UserKonfigurasi = () => {
                         variant="outline"
                         shape="square"
                         size="sm"
-                        onClick={()=>{toggleDetails(index)}}
+                        onClick={()=>{toggleDetails(item.id)}}
                       >
-                        {details.includes(index) ? 'Hide' : 'Show'}
+                        {details.includes(item.id) ? 'Sembunyi' : 'Tampilkan'}
                       </CButton>
                     </td>
                   )
@@ -101,16 +148,19 @@ const UserKonfigurasi = () => {
               'details':
                 (item, index)=>{
                   return (
-                    <CCollapse show={details.includes(index)}>
+                    <CCollapse show={details.includes(item.id)}>
                       <CCardBody>
                         <h4>
                           {item.username}
                         </h4>
                         <p className="text-muted">User since: {item.registered}</p>
-                        <CButton size="sm" color="info">
-                          User Settings
+                        <CButton onClick={async () => {
+                          await setinitialValues(item);
+                          ToggleModalEdit();
+                        }} size="sm" color="info">
+                          Ubah Data
                         </CButton>
-                        <CButton size="sm" color="danger" className="ml-1">
+                        <CButton onClick={() => ValidasiDelete(item.id)} size="sm" color="danger" className="ml-1">
                           Delete
                         </CButton>
                       </CCardBody>
@@ -122,7 +172,12 @@ const UserKonfigurasi = () => {
         </CCardBody>
       </CCard>
 
-      <ModalTambahUser Modal={Modal} ToggleModal={ToggleModal} GetData={GetData}/>
+      <ModalTambahUser Modal={Modal} ToggleModal={ToggleModal} GetData={GetData} initialValues={null}/>
+      {
+        initialValues !== null ?
+        <ModalTambahUser Modal={ModalEdit} ToggleModal={ToggleModalEdit} GetData={GetData} initialValues={initialValues}/> : null
+      }
+
     </>
   )
 }

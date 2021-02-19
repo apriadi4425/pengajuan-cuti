@@ -14,6 +14,7 @@ import './user.css';
 import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as FormikHelper from './FormikHelper';
+import swal from 'sweetalert';
 
 const TextForm = (props) => {
   return(
@@ -28,29 +29,51 @@ const TextForm = (props) => {
   )
 }
 
-const ModalTambahUserKomponent = ({Modal, ToggleModal, GetData}) => {
+const ModalTambahUserKomponent = ({Modal, ToggleModal, GetData, initialValues}) => {
   const Token = JSON.parse(localStorage.getItem('token'));
   const [Loading, setLoading] = useState(false);
 
-
   const TambahDataPegawai = async (values, { setFieldError }) => {
     setLoading(true);
-    await axios({
-      method : 'post',
-      url : `${process.env.REACT_APP_BASE_URL}/api/auth/register`,
-      data : values,
-      headers: {
-        Accept: 'application/json',
-        Authorization: `Bearer ${Token}`,
-      },
-    }).then(res => {
-      GetData();
-      ToggleModal();
-    }).catch(err => {
-      if(err.response.status){
-        setFieldError(err.response.data.data.message[0].path, err.response.data.data.message[0].message)
-      }
-    });
+    if(initialValues !== null){
+      await axios({
+        method : 'put',
+        url : `${process.env.REACT_APP_BASE_URL}/api/user`,
+        data : values,
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${Token}`,
+        },
+      }).then(async res => {
+        swal("Berhasil, data berhasil diubah", {
+          icon: "success",
+        });
+        ToggleModal();
+        await GetData();
+      }).catch(err => {
+        if(err.response.status){
+          setFieldError(err.response.data.data.message[0].path, err.response.data.data.message[0].message)
+        }
+      });
+    }else{
+      await axios({
+        method : 'post',
+        url : `${process.env.REACT_APP_BASE_URL}/api/auth/register`,
+        data : values,
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${Token}`,
+        },
+      }).then(async res => {
+        ToggleModal();
+        await GetData();
+      }).catch(err => {
+        if(err.response.status){
+          setFieldError(err.response.data.data.message[0].path, err.response.data.data.message[0].message)
+        }
+      });
+    }
+
     setLoading(false);
   }
 
@@ -62,7 +85,7 @@ const ModalTambahUserKomponent = ({Modal, ToggleModal, GetData}) => {
       size={'lg'}
     >
       <Formik
-        initialValues={FormikHelper.InitialValues}
+        initialValues={initialValues === null ? FormikHelper.InitialValues : initialValues}
         validationSchema={FormikHelper.SignupSchema}
         onSubmit={TambahDataPegawai}
       >
@@ -76,8 +99,15 @@ const ModalTambahUserKomponent = ({Modal, ToggleModal, GetData}) => {
                   <TextForm name={'nip'} label={'NIP Pegawai'} type={'text'}/>
                   <TextForm name={'email'} label={'Email Pegawai'} type={'text'}/>
                   <TextForm name={'username'} label={'Username Pegawai'} type={'text'}/>
+
+              {
+                initialValues === null ?
+                <React.Fragment>
                   <TextForm name={'password'} label={'Password'} type={'password'}/>
                   <TextForm name={'c_password'} label={'Konfirmasi Password'} type={'password'}/>
+                </React.Fragment> : null
+              }
+
                   <TextForm name={'agama'} label={'Agama'} type={'text'}/>
                   <TextForm name={'jenis_kelamin'} label={'Jenis Kelamin'} type={'text'}/>
 
@@ -94,12 +124,12 @@ const ModalTambahUserKomponent = ({Modal, ToggleModal, GetData}) => {
                   <TextForm label={'Eselon'} name={'eselon'} type={'text'} />
 
                   <TextForm label={'Golongan Pegawai'} name={'golongan'} type={'text'} />
-                  <TextForm label={'TMT Golongan'} name={'tmt_golongan'} type={'text'}/>
+                  <TextForm label={'TMT Golongan'} name={'tmt_golongan'} type={'date'}/>
 
             </CRow>
           </CModalBody>
           <CModalFooter>
-            <CButton disabled={Loading} type='submit' color="primary">{Loading ? 'Loading...' : 'Tambah Pegawai'}</CButton>{' '}
+            <CButton disabled={Loading} type='submit' color="primary">{Loading ? 'Loading...' : initialValues === null ? 'Tambah Data' : 'Ubah Data'}</CButton>{' '}
             <CButton
               color="secondary"
               onClick={ToggleModal}
