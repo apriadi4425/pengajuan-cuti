@@ -39,7 +39,7 @@ const Login = ({history}) => {
         }}
     }).then(res => {
       localStorage.setItem('login', true);
-      localStorage.setItem('token', res.data.data.token);
+      localStorage.setItem('token', JSON.stringify(res.data.data.token));
       history.push('/')
     }).catch(function (error) {
       if(error.response && error.response.status === 401){
