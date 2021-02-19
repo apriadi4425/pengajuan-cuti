@@ -1,10 +1,6 @@
 
-export const usersData = [
-
-]
-
 export const fields = [
-  { key: 'name', label : 'Nama', _style: { width: '25%'} },
+  { key: 'nama', label : 'Nama', _style: { width: '25%'} },
   { key: 'nip', label : 'NIP', _style: { width: '18%'} },
   { key: 'jabatan', label : 'Jabatan', _style: { width: '15%'} },
   { key: 'pangkat', label : 'Pangkat/Golongan', _style: { width: '20%'}},

@@ -1,13 +1,17 @@
-import React, {useState, useCallback} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import {
   CCard,
   CCardBody, CCardHeader, CDataTable, CCollapse, CButton, CBadge
 } from '@coreui/react'
-import {usersData, fields, getBadge} from './helper'
+import {fields, getBadge} from './helper'
 import ModalTambahUser from "./ModalTambahUser";
+import axios from "axios";
 
 const UserKonfigurasi = () => {
+  const Token = JSON.parse(localStorage.getItem('token'));
+  const [UserData, setUserData] = useState([])
   const [details, setDetails] = useState([])
+  const [Loading, setLoading] = useState(true)
 
   //state modal
   const [Modal, setModal] = useState(false);
@@ -26,6 +30,26 @@ const UserKonfigurasi = () => {
     setDetails(newDetails)
   }
 
+  const GetData = useCallback(async () => {
+    await axios({
+      method : 'get',
+      url : `${process.env.REACT_APP_BASE_URL}/api/user/all`,
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${Token}`,
+      },
+    }).then(res => {
+      setUserData(res.data.data)
+    }).catch(err => {
+      console.log(err)
+    });
+    setLoading(false)
+  },[])
+
+  useEffect(() => {
+    GetData()
+  }, [])
+
   return(
     <>
       <CCard>
@@ -38,11 +62,11 @@ const UserKonfigurasi = () => {
 
         <CCardBody>
           <CDataTable
-            items={usersData}
+            items={UserData}
             fields={fields}
             columnFilter
-            // noItemsView={Loading ?  {noItems: '... Mengambil Data'} :  {noResults: 'Pencarian Tidak Ditemukan', noItems: 'Tidak Ada Data'}}
-            // loading={Loading}
+            noItemsView={Loading ?  {noItems: '... Mengambil Data'} :  {noResults: 'Pencarian Tidak Ditemukan', noItems: 'Tidak Ada Data'}}
+            loading={Loading}
             itemsPerPage={10}
             hover
             striped={true}
@@ -98,7 +122,7 @@ const UserKonfigurasi = () => {
         </CCardBody>
       </CCard>
 
-      <ModalTambahUser Modal={Modal} ToggleModal={ToggleModal}/>
+      <ModalTambahUser Modal={Modal} ToggleModal={ToggleModal} GetData={GetData}/>
     </>
   )
 }
