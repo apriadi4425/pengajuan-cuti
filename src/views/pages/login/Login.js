@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useContext, useState} from 'react'
 import { Link } from 'react-router-dom'
 import {
   CButton,
@@ -18,9 +18,11 @@ import CIcon from '@coreui/icons-react'
 import { withRouter } from 'react-router-dom';
 import axios from 'axios';
 import swal from 'sweetalert';
+import {GlobalContext} from "../../../globalState";
 
 
 const Login = ({history}) => {
+  const {CheckApakahLogin} = useContext(GlobalContext)
   const [Loading, setLoading] = useState(false);
   const [Form, setForm] = useState({ username : '', password : ''});
 
@@ -40,6 +42,7 @@ const Login = ({history}) => {
     }).then(res => {
       localStorage.setItem('login', true);
       localStorage.setItem('token', JSON.stringify(res.data.data.token));
+      CheckApakahLogin(res.data.data.token);
       history.push('/')
     }).catch(function (error) {
       if(error.response && error.response.status === 401){
@@ -70,7 +73,7 @@ const Login = ({history}) => {
                           <CIcon name="cil-user" />
                         </CInputGroupText>
                       </CInputGroupPrepend>
-                      <CInput type="text" name={'username'} value={Form.username} onChange={HandleForm} placeholder="Username" autoComplete="username" />
+                      <CInput type="text" name={'username'} value={Form.username} onChange={HandleForm} placeholder="Email / Username" autoComplete="username" />
                     </CInputGroup>
                     <CInputGroup className="mb-4">
                       <CInputGroupPrepend>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useContext} from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import {
   CCreateElement,
@@ -16,10 +16,13 @@ import CIcon from '@coreui/icons-react'
 
 // sidebar nav config
 import navigation from './_nav'
+import navigation_user from './_nav_user'
+import {GlobalContext} from "../globalState";
 
 const TheSidebar = () => {
   const dispatch = useDispatch()
   const show = useSelector(state => state.sidebarShow)
+  const {User} = useContext(GlobalContext)
 
   return (
     <CSidebar
@@ -41,7 +44,7 @@ const TheSidebar = () => {
       <CSidebarNav>
 
         <CCreateElement
-          items={navigation}
+          items={User.otoritas === 1 ? navigation : navigation_user}
           components={{
             CSidebarNavDivider,
             CSidebarNavDropdown,

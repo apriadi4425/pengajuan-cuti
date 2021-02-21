@@ -6,6 +6,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import {GlobalProvider} from "./globalState";
 
 import { icons } from './assets/icons'
 
@@ -16,7 +17,9 @@ React.icons = icons
 
 ReactDOM.render(
   <Provider store={store}>
-    <App/>
+    <GlobalProvider>
+      <App/>
+    </GlobalProvider>
   </Provider>,
   document.getElementById('root')
 );

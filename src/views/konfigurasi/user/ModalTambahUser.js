@@ -11,10 +11,10 @@ import {
   CModalTitle, CRow
 } from "@coreui/react";
 import './user.css';
-import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as FormikHelper from './FormikHelper';
 import swal from 'sweetalert';
+import {API} from '../../../helper';
 
 const TextForm = (props) => {
   return(
@@ -30,21 +30,12 @@ const TextForm = (props) => {
 }
 
 const ModalTambahUserKomponent = ({Modal, ToggleModal, GetData, initialValues}) => {
-  const Token = JSON.parse(localStorage.getItem('token'));
   const [Loading, setLoading] = useState(false);
 
   const TambahDataPegawai = async (values, { setFieldError }) => {
     setLoading(true);
     if(initialValues !== null){
-      await axios({
-        method : 'put',
-        url : `${process.env.REACT_APP_BASE_URL}/api/user`,
-        data : values,
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${Token}`,
-        },
-      }).then(async res => {
+      await API('put', 'api/user', values).then(async res => {
         swal("Berhasil, data berhasil diubah", {
           icon: "success",
         });
@@ -54,26 +45,18 @@ const ModalTambahUserKomponent = ({Modal, ToggleModal, GetData, initialValues}) 
         if(err.response.status){
           setFieldError(err.response.data.data.message[0].path, err.response.data.data.message[0].message)
         }
-      });
+      })
+
     }else{
-      await axios({
-        method : 'post',
-        url : `${process.env.REACT_APP_BASE_URL}/api/auth/register`,
-        data : values,
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${Token}`,
-        },
-      }).then(async res => {
+      await API('post', 'api/auth/register', values).then(async res => {
         ToggleModal();
         await GetData();
       }).catch(err => {
         if(err.response.status){
           setFieldError(err.response.data.data.message[0].path, err.response.data.data.message[0].message)
         }
-      });
+      })
     }
-
     setLoading(false);
   }
 
@@ -90,8 +73,8 @@ const ModalTambahUserKomponent = ({Modal, ToggleModal, GetData, initialValues}) 
         onSubmit={TambahDataPegawai}
       >
         <Form>
-          <CModalHeader closeButton>
-            <CModalTitle>Tambah Data Pegawai</CModalTitle>
+          <CModalHeader>
+            <CModalTitle>{initialValues === null ? "Tambah Data Pegawai" : "Edit Data Pegawai"}</CModalTitle>
           </CModalHeader>
           <CModalBody>
             <CRow>
