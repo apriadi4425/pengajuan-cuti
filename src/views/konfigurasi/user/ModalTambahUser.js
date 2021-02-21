@@ -1,29 +1,19 @@
-import React, { useState } from 'react';
-import {
-  CButton,
-  CCol,
-  CFormGroup, CInput,
-  CLabel,
-  CModal,
-  CModalBody,
-  CModalFooter,
-  CModalHeader,
-  CModalTitle, CRow
-} from "@coreui/react";
+import React, { useState, useContext } from 'react';
+import {CButton, CCol, CFormGroup, CInput, CLabel, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle, CRow, CSelect} from "@coreui/react";
 import './user.css';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as FormikHelper from './FormikHelper';
+import { API } from '../../../helper';
 import swal from 'sweetalert';
-import {API} from '../../../helper';
+import {GlobalContext} from "../../../globalState";
 
 const TextForm = (props) => {
   return(
     <CCol md="6">
       <CFormGroup>
         <CLabel>{props.label}</CLabel>
-        <Field type={props.type} className={props.type === 'password' ? 'type_password' : null} as={CInput} id={props.name} name={props.name} placeholder={`Isikan ${props.name}`}/>
+        <Field type={props.type} className={props.type === 'password' ? 'type_password' : null} as={CInput} id={props.label} name={props.name} placeholder={`Isikan ${props.name}`}/>
         <ErrorMessage name={props.name} render={msg => <span style={{color : 'red', fontSize : 10, marginLeft : 5}}>{msg}</span>} />
-
       </CFormGroup>
     </CCol>
   )
@@ -31,6 +21,7 @@ const TextForm = (props) => {
 
 const ModalTambahUserKomponent = ({Modal, ToggleModal, GetData, initialValues}) => {
   const [Loading, setLoading] = useState(false);
+  const {ListUser, GetListUser} = useContext(GlobalContext)
 
   const TambahDataPegawai = async (values, { setFieldError }) => {
     setLoading(true);
@@ -50,6 +41,7 @@ const ModalTambahUserKomponent = ({Modal, ToggleModal, GetData, initialValues}) 
     }else{
       await API('post', 'api/auth/register', values).then(async res => {
         ToggleModal();
+        GetListUser();
         await GetData();
       }).catch(err => {
         if(err.response.status){
@@ -108,6 +100,22 @@ const ModalTambahUserKomponent = ({Modal, ToggleModal, GetData, initialValues}) 
 
                   <TextForm label={'Golongan Pegawai'} name={'golongan'} type={'text'} />
                   <TextForm label={'TMT Golongan'} name={'tmt_golongan'} type={'date'}/>
+                  <TextForm label={'Nomor Telpon'} name={'nomor_telpon'} type={'text'}/>
+
+                  <CCol md="6">
+                    <CFormGroup>
+                      <CLabel>Atasan Langung</CLabel>
+                      <Field name="atasan_langsung" as={CSelect}>
+                        <option value={''}>Pilih Atasan Langsung</option>
+                        {
+                          ListUser.map((list, index) =>
+                            <option key={index} value={list.id}>{list.nama} -- {list.jabatan}</option>
+                          )
+                        }
+                      </Field>
+                    </CFormGroup>
+                  </CCol>
+
 
             </CRow>
           </CModalBody>

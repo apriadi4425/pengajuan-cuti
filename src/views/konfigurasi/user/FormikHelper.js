@@ -26,6 +26,8 @@ export const InitialValues = {
   tmt_jabatan: '',
   tanggal_sk_jabatan: '',
   nomor_sk_jabatan: '',
+  atasan_langsung: '',
+  nomor_telpon : '',
 }
 
 export const SignupSchema = Yup.object().shape({

@@ -1,11 +1,22 @@
 import React, {useEffect, useState, createContext} from 'react';
 import axios from "axios";
+import {API} from "./helper";
 export const GlobalContext = createContext();
 const Token = JSON.parse(localStorage.getItem('token'));
 
 export const GlobalProvider = ({children}) => {
   const [Loading, setLoading] = useState(true);
   const [User, setUser] = useState({});
+  const [ListUser, setListUser] = useState([]);
+  const [Konfig, setKonfig] = useState({});
+
+  const GetListUser = async () => {
+    await API('get','api/user').then(res => {
+      setListUser(res.data.data)
+    }).catch(err => {
+      console.log(err)
+    })
+  }
 
   const CheckApakahLogin = async (Token) => {
     if(Token !== null){
@@ -18,6 +29,7 @@ export const GlobalProvider = ({children}) => {
         },
       }).then(res => {
         setUser(res.data.data)
+        setKonfig(res.data.konfig)
       }).catch(e => {
         console.log(e)
       })
@@ -27,9 +39,10 @@ export const GlobalProvider = ({children}) => {
 
   useEffect(() => {
     CheckApakahLogin(Token);
+    GetListUser();
   }, [])
 
-  const GlobalState = {Loading, CheckApakahLogin, User}
+  const GlobalState = {Loading, CheckApakahLogin, User, ListUser, GetListUser, Konfig}
 
   return(
     <GlobalContext.Provider value={GlobalState}>
