@@ -1,10 +1,5 @@
 import React, {useState, useContext, useEffect} from 'react';
-import {
-  CBadge, CButton,
-  CCard,
-  CCardBody, CCardHeader, CCollapse, CDataTable
-} from '@coreui/react'
-import axios from "axios";
+import {CBadge, CButton, CCard, CCardBody, CCardHeader, CCollapse, CDataTable} from '@coreui/react'
 import {fields, getBadge} from './helper'
 import CustomHooks from "./c_detail";
 import CustomModal from "./c_modal";
@@ -28,7 +23,7 @@ const UserBiasaKomponent = () => {
         }).catch(err => {
           console.log(err)
         });
-        setLoading(false)
+    setLoading(false)
   }
 
   useEffect(() => {

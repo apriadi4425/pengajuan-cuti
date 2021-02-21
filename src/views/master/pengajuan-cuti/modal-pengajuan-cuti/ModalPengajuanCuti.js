@@ -30,14 +30,15 @@ const TextForm = (props) => {
   )
 }
 
-const ModalPengajuanCuti = ({Modal, ToggleModal}) => {
+const ModalPengajuanCuti = ({Modal, ToggleModal, GetData}) => {
   const {InitialValues, SignupSchema} = Helper();
   const {ListUser, AsyncToken} = useContext(GlobalContext);
 
   const KirimPengajuan = async (values, { setFieldError }) => {
     await API('post','api/pengajuan/insert', values, AsyncToken)
-      .then(res => {
-        console.log(res.data)
+      .then(async res => {
+        await GetData();
+        ToggleModal();
       }).catch(err => {
         if(err.response.status){
           setFieldError(err.response.data.data.message[0].path, err.response.data.data.message[0].message)
