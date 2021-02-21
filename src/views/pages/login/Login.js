@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react'
+import React, {useContext, useState, useEffect} from 'react'
 import { Link } from 'react-router-dom'
 import {
   CButton,
@@ -55,6 +55,12 @@ const Login = ({history}) => {
     });
     setLoading(false);
   }
+
+  useEffect(() => {
+    return(() => {
+      setForm({ username : '', password : ''})
+    })
+  }, [])
 
   return (
     <div className="c-app c-default-layout flex-row align-items-center">

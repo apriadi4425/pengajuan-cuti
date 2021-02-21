@@ -5,18 +5,21 @@ export const GlobalContext = createContext();
 const Token = JSON.parse(localStorage.getItem('token'));
 
 export const GlobalProvider = ({children}) => {
+
   const [Loading, setLoading] = useState(true);
   const [User, setUser] = useState({});
   const [ListUser, setListUser] = useState([]);
   const [Konfig, setKonfig] = useState({});
+  const [AsyncToken, setAsyncToken] = useState(null);
 
-  const GetListUser = async () => {
-    await API('get','api/user').then(res => {
+  const GetListUser = async (Token) => {
+    await API('get','api/user', null, Token).then(res => {
       setListUser(res.data.data)
     }).catch(err => {
       console.log(err)
     })
   }
+
 
   const CheckApakahLogin = async (Token) => {
     if(Token !== null){
@@ -28,8 +31,10 @@ export const GlobalProvider = ({children}) => {
           Authorization: `Bearer ${Token}`,
         },
       }).then(res => {
+        setAsyncToken(Token);
         setUser(res.data.data)
         setKonfig(res.data.konfig)
+        GetListUser(Token);
       }).catch(e => {
         console.log(e)
       })
@@ -39,10 +44,9 @@ export const GlobalProvider = ({children}) => {
 
   useEffect(() => {
     CheckApakahLogin(Token);
-    GetListUser();
   }, [])
 
-  const GlobalState = {Loading, CheckApakahLogin, User, ListUser, GetListUser, Konfig}
+  const GlobalState = {Loading, CheckApakahLogin, User, ListUser, GetListUser, Konfig, AsyncToken}
 
   return(
     <GlobalContext.Provider value={GlobalState}>

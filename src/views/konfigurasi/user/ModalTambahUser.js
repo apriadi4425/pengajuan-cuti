@@ -21,12 +21,12 @@ const TextForm = (props) => {
 
 const ModalTambahUserKomponent = ({Modal, ToggleModal, GetData, initialValues}) => {
   const [Loading, setLoading] = useState(false);
-  const {ListUser, GetListUser} = useContext(GlobalContext)
+  const {ListUser, GetListUser, AsyncToken} = useContext(GlobalContext)
 
   const TambahDataPegawai = async (values, { setFieldError }) => {
     setLoading(true);
     if(initialValues !== null){
-      await API('put', 'api/user', values).then(async res => {
+      await API('put', 'api/user', values, AsyncToken).then(async res => {
         swal("Berhasil, data berhasil diubah", {
           icon: "success",
         });
@@ -37,9 +37,8 @@ const ModalTambahUserKomponent = ({Modal, ToggleModal, GetData, initialValues}) 
           setFieldError(err.response.data.data.message[0].path, err.response.data.data.message[0].message)
         }
       })
-
     }else{
-      await API('post', 'api/auth/register', values).then(async res => {
+      await API('post', 'api/auth/register', values, AsyncToken).then(async res => {
         ToggleModal();
         GetListUser();
         await GetData();

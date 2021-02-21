@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect} from 'react';
+import React, {useState, useCallback, useEffect, useContext} from 'react';
 import {
   CCard,
   CCardBody, CCardHeader, CDataTable, CCollapse, CButton, CBadge
@@ -9,9 +9,10 @@ import {API} from "../../../helper";
 import swal from 'sweetalert';
 import CustomHooks from "./c_detail";
 import CustomModal from "./c_modal";
+import {GlobalContext} from "../../../globalState";
 
 const UserAdminKomponent = () => {
-
+  const {AsyncToken} = useContext(GlobalContext)
   const [UserData, setUserData] = useState([])
   const [details, toggleDetails] = CustomHooks();
   const [Loading, setLoading] = useState(true)
@@ -23,7 +24,7 @@ const UserAdminKomponent = () => {
 
 
   const GetData = useCallback(async () => {
-    await API('get','api/user')
+    await API('get','api/user', null, AsyncToken)
       .then(res => {
         setUserData(res.data.data)
       }).catch(err => {
@@ -51,7 +52,7 @@ const UserAdminKomponent = () => {
 
   const DeleteUser = async (IdUser) => {
     setLoading(true)
-    await API('delete','api/user', {id : IdUser})
+    await API('delete','api/user', {id : IdUser}, AsyncToken)
       .then(async res => {
         await GetData();
         swal("Berhasil, data berhasil dihapus", {

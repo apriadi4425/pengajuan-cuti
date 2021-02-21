@@ -16,6 +16,7 @@ import {
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import Helper from './helper';
 import {GlobalContext} from "../../../../globalState";
+import {API} from "../../../../helper";
 
 const TextForm = (props) => {
   return(
@@ -30,8 +31,20 @@ const TextForm = (props) => {
 }
 
 const ModalPengajuanCuti = ({Modal, ToggleModal}) => {
-  const {InitialValues} = Helper();
-  const {ListUser} = useContext(GlobalContext)
+  const {InitialValues, SignupSchema} = Helper();
+  const {ListUser, AsyncToken} = useContext(GlobalContext);
+
+  const KirimPengajuan = async (values, { setFieldError }) => {
+    await API('post','api/pengajuan/insert', values, AsyncToken)
+      .then(res => {
+        console.log(res.data)
+      }).catch(err => {
+        if(err.response.status){
+          setFieldError(err.response.data.data.message[0].path, err.response.data.data.message[0].message)
+        }
+      })
+  }
+
   return(
     <CModal
       show={Modal}
@@ -39,7 +52,11 @@ const ModalPengajuanCuti = ({Modal, ToggleModal}) => {
       closeOnBackdrop={false}
       size={'lg'}
     >
-      <Formik initialValues={InitialValues}>
+      <Formik
+        initialValues={InitialValues}
+        validationSchema={SignupSchema}
+        onSubmit={KirimPengajuan}
+      >
         <Form>
           <CModalHeader>
             <CModalTitle>Formulir Pengajuan Cuti</CModalTitle>
@@ -59,6 +76,7 @@ const ModalPengajuanCuti = ({Modal, ToggleModal}) => {
                     <option value={5}>Cuti Karena Alasan Penting</option>
                     <option value={6}>Cuti di Luar Tanggungan Negara</option>
                   </Field>
+                  <ErrorMessage name={'jenis_cuti'} render={msg => <span style={{color : 'red', fontSize : 10, marginLeft : 5}}>{msg}</span>} />
                 </CFormGroup>
               </CCol>
               <TextForm label={'Alasan Cuti'} type={'text'} name={'alasan_cuti'}/>
@@ -76,6 +94,7 @@ const ModalPengajuanCuti = ({Modal, ToggleModal}) => {
                       )
                     }
                   </Field>
+                  <ErrorMessage name={'atasan_langsung'} render={msg => <span style={{color : 'red', fontSize : 10, marginLeft : 5}}>{msg}</span>} />
                 </CFormGroup>
               </CCol>
               <TextForm label={'Tanggal Pengajuan'} name={'tanggal_pengajuan'} type={'date'}/>

@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {
   CBadge, CButton,
   CCard,
@@ -9,9 +9,11 @@ import {fields, getBadge} from './helper'
 import CustomHooks from "./c_detail";
 import CustomModal from "./c_modal";
 import ModalTambahUser from "./ModalTambahUser";
+import {GlobalContext} from "../../../globalState";
+import {API} from "../../../helper";
 
 const UserBiasaKomponent = () => {
-  const Token = JSON.parse(localStorage.getItem('token'));
+  const {AsyncToken} = useContext(GlobalContext)
   const [UserData, setUserData] = useState([]);
   const [Loading, setLoading] = useState(true);
   const [details, toggleDetails] = CustomHooks();
@@ -20,19 +22,13 @@ const UserBiasaKomponent = () => {
 
 
   const GetData = async () => {
-    await axios({
-      method : 'get',
-      url : `${process.env.REACT_APP_BASE_URL}/api/user/list-saya`,
-      headers: {
-        Accept: 'application/json',
-        Authorization: `Bearer ${Token}`,
-      },
-    }).then(res => {
-      setUserData(res.data.data)
-    }).catch(err => {
-      console.log(err)
-    });
-    setLoading(false)
+    await API('get','api/user/list-saya', null, AsyncToken)
+       .then(res => {
+          setUserData(res.data.data)
+        }).catch(err => {
+          console.log(err)
+        });
+        setLoading(false)
   }
 
   useEffect(() => {

@@ -1,7 +1,6 @@
 import axios from "axios";
-const Token = JSON.parse(localStorage.getItem('token'));
 
-export const API = (method, url, data = null) => {
+export const API = (method, url, data = null, Token) => {
   return new Promise((resolve, reject) => {
     axios({
       method : method,
