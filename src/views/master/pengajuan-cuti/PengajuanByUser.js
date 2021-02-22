@@ -4,6 +4,7 @@ import ModalPengajuanCuti from "./modal-pengajuan-cuti/ModalPengajuanCuti";
 import CustomModal from "../../konfigurasi/user/c_modal";
 import {API} from "../../../helper";
 import {GlobalContext} from "../../../globalState";
+import {fields, JenisCuti, StatusCuti} from "./helper";
 
 const PengajuanByUser = () => {
   const {AsyncToken} = useContext(GlobalContext)
@@ -11,10 +12,7 @@ const PengajuanByUser = () => {
   const [Loading, setLoading] = useState(false);
   const [Data, setData] = useState([]);
 
-  const fields = [
-    { key: 'jenis_cuti', label : 'Jenis Cuti', _style: { width: '25%'} },
-    { key: 'alasan_cuti', label : 'Alasan Cuti', _style: { width: '25%'} },
-  ]
+
 
   const GetData = async () => {
     setLoading(true);
@@ -54,7 +52,18 @@ const PengajuanByUser = () => {
             sorter
             pagination
             scopedSlots = {{
-
+              'jenis_cuti' : (item) => (
+                <td>
+                  {JenisCuti(item.jenis_cuti)}
+                </td>
+              ),
+              'status' : (item) => (
+                <td>
+                  <CBadge color={StatusCuti(item.status)[1]}>
+                    {StatusCuti(item.status)[0]}
+                  </CBadge>
+                </td>
+              )
             }}
           />
         </CCardBody>
