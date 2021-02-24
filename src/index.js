@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import {GlobalProvider} from "./globalState";
-
+import './index.css';
 import { icons } from './assets/icons'
 
 import { Provider } from 'react-redux'

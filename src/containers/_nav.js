@@ -12,6 +12,16 @@ const _nav =  [
   },
   {
     _tag: 'CSidebarNavTitle',
+    _children: ['Master Data']
+  },
+  {
+    _tag: 'CSidebarNavItem',
+    name: 'Pengajuan Cuti',
+    to: '/master/pengajuan-cuti',
+    icon: <Icon name="user" className='mr-3'/>,
+  },
+  {
+    _tag: 'CSidebarNavTitle',
     _children: ['Konfigurasi']
   },
   {
