@@ -112,6 +112,7 @@ const ModalTambahUserKomponent = ({Modal, ToggleModal, GetData, initialValues}) 
                           )
                         }
                       </Field>
+                      <ErrorMessage name={'atasan_langsung'} render={msg => <span style={{color : 'red', fontSize : 10, marginLeft : 5}}>{msg}</span>} />
                     </CFormGroup>
                   </CCol>
 

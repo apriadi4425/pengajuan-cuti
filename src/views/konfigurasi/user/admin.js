@@ -17,6 +17,7 @@ const UserAdminKomponent = () => {
   const [details, toggleDetails] = CustomHooks();
   const [Loading, setLoading] = useState(true)
 
+
   const [initialValues, setinitialValues] = useState(null)
 
   const [Modal,ToggleModal] = CustomModal();
@@ -33,29 +34,29 @@ const UserAdminKomponent = () => {
     setLoading(false)
   },[])
 
-  const ValidasiDelete = (IdUser) => {
+  const ValidasiDelete = (IdUser, action) => {
     swal({
       title: "Anda Yakin?",
-      text: "Ketika dihapus data tidak akan bisa kembali lagi",
+      text: action === 'block' ? 'User tidak akan dapat mengakses aplikasi' : 'User dapat kembali mengakses aplikasi',
       icon: "warning",
       buttons: true,
       dangerMode: true,
     })
       .then((willDelete) => {
         if (willDelete) {
-          DeleteUser(IdUser)
+          DeleteUser(IdUser, action)
         } else {
-          swal("Data tidak jadi dihapus");
+          swal("Aksi dibatalkan");
         }
       });
   }
 
-  const DeleteUser = async (IdUser) => {
+  const DeleteUser = async (IdUser, action) => {
     setLoading(true)
-    await API('delete','api/user', {id : IdUser}, AsyncToken)
+    await API('put','api/user/block', {id : IdUser, action : action}, AsyncToken)
       .then(async res => {
         await GetData();
-        swal("Berhasil, data berhasil dihapus", {
+        swal("Berhasil, data berhasil diblokir", {
           icon: "success",
         });
       }).catch(err => {
@@ -131,8 +132,8 @@ const UserAdminKomponent = () => {
                         }} size="sm" color="info">
                           Ubah Data
                         </CButton>
-                        <CButton onClick={() => ValidasiDelete(item.id)} size="sm" color="danger" className="ml-1">
-                          Delete
+                        <CButton disabled={item.otoritas === 1} onClick={() => ValidasiDelete(item.id, item.block === 1 ? 'block' : 'unblock')} size="sm" color={item.block === 1 ? 'danger' : 'warning'} className="ml-1">
+                          {item.block === 1 ? 'Blokir' : 'Buka Blokir'}
                         </CButton>
                       </CCardBody>
                     </CCollapse>
