@@ -5,11 +5,13 @@ import {
 } from '@coreui/react'
 import {fields, getBadge} from './helper'
 import ModalTambahUser from "./ModalTambahUser";
+import ModalSetSaldoAwalCuti from "./ModalSetSaldoAwalCuti";
 import {API} from "../../../helper";
 import swal from 'sweetalert';
 import CustomHooks from "./c_detail";
 import CustomModal from "./c_modal";
 import {GlobalContext} from "../../../globalState";
+import moment from 'moment';
 
 const UserAdminKomponent = () => {
   const {AsyncToken} = useContext(GlobalContext)
@@ -22,6 +24,7 @@ const UserAdminKomponent = () => {
 
   const [Modal,ToggleModal] = CustomModal();
   const [ModalEdit, ToggleModalEdit] = CustomModal();
+  const [StateModalSaldoCUti, ToggleModalSetStateModalSaldoCUti] = CustomModal();
 
 
   const GetData = useCallback(async () => {
@@ -132,6 +135,24 @@ const UserAdminKomponent = () => {
                         }} size="sm" color="info">
                           Ubah Data
                         </CButton>
+
+                        <CButton className={'ml-2'} onClick={async () => {
+                            const TahunIni = moment().format('YYYY');
+                            const TahunLalu = TahunIni - 1;
+                            const DuaTahunLalu = TahunIni - 2;
+
+                            const NewData = {id_user : item.id, [TahunIni] : 12, [TahunLalu] : 6, [DuaTahunLalu] : 6};
+                            item.saldo_cuti.forEach(items => {
+                              if(items.tahun === TahunIni.toString() || items.tahun === TahunLalu.toString() || items.tahun === DuaTahunLalu.toString()){
+                                NewData[items.tahun] = items.sisa;
+                              }
+                            })
+                            setinitialValues(NewData)
+                            ToggleModalSetStateModalSaldoCUti();
+                        }} size="sm" color="success">
+                          Set Saldo Awal Cuti
+                        </CButton>
+
                         <CButton disabled={item.otoritas === 1} onClick={() => ValidasiDelete(item.id, item.block === 1 ? 'block' : 'unblock')} size="sm" color={item.block === 1 ? 'danger' : 'warning'} className="ml-1">
                           {item.block === 1 ? 'Blokir' : 'Buka Blokir'}
                         </CButton>
@@ -147,7 +168,11 @@ const UserAdminKomponent = () => {
       <ModalTambahUser Modal={Modal} ToggleModal={ToggleModal} GetData={GetData} initialValues={null}/>
       {
         initialValues !== null ?
-          <ModalTambahUser Modal={ModalEdit} ToggleModal={ToggleModalEdit} GetData={GetData} initialValues={initialValues}/> : null
+          <React.Fragment>
+            <ModalSetSaldoAwalCuti Modal={StateModalSaldoCUti} ToggleModal={ToggleModalSetStateModalSaldoCUti} GetData={GetData} initialValues={initialValues}/>
+            <ModalTambahUser Modal={ModalEdit} ToggleModal={ToggleModalEdit} GetData={GetData} initialValues={initialValues}/>
+          </React.Fragment>
+           : null
       }
 
     </>

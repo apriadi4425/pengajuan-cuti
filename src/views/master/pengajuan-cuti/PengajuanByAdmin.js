@@ -6,6 +6,7 @@ import {API} from "../../../helper";
 import {GlobalContext} from "../../../globalState";
 import {fields, JenisCuti, StatusCuti} from "./helper";
 import CustomHooks from "../../konfigurasi/user/c_detail";
+import swal from 'sweetalert';
 
 const PengajuanByAdmin = () => {
   const {AsyncToken} = useContext(GlobalContext)
@@ -28,14 +29,50 @@ const PengajuanByAdmin = () => {
     setLoading(false);
   }
 
+  const ValidasiSetujui = (Id) => {
+    swal({
+      title: "Anda Yakin?",
+      text: 'Setelah disetujui data tidak akan dapat dirubah',
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    })
+      .then((willDelete) => {
+        if (willDelete) {
+          SetujuiPengajuan(Id)
+        } else {
+          swal("Aksi dibatalkan");
+        }
+      });
+  }
+
   const SetujuiPengajuan = async (Id) => {
     const data = {status : 2, pertimbangan_atasan_langsung : '', id : Id}
     await API('post', 'api/pengajuan/setujui', data, AsyncToken)
       .then(res => {
-        console.log(res)
+        GetData();
       }).catch(err => {
         console.log(err)
       })
+  }
+
+  const TangguhkanPengajuan = (Id) => {
+    swal("Tuliskan alasan Penangguhan!", {
+      content: "input",
+    })
+      .then((value) => {
+        if(value === null){
+          swal("aksi dibatalkan")
+        }else{
+          const data = {status : 4, pertimbangan_atasan_langsung : value, id : Id}
+          API('post', 'api/pengajuan/setujui', data, AsyncToken)
+          .then(res => {
+            GetData();
+          }).catch(err => {
+            console.log(err)
+          })
+        }
+      });
   }
 
   useEffect(() => {
@@ -107,8 +144,8 @@ const PengajuanByAdmin = () => {
                         <h6 className={'ml-3'}>Sisa Cuti : {item.sisa_cuti} hari</h6>
                         <h6 className={'ml-3'}>Alasan Cuti : {item.alasan_cuti}</h6>
 
-                        <CButton className='mt-3' size="sm" color={'primary'}>Setujui</CButton>
-                        <CButton className='mt-3 ml-3' size="sm" color={'warning'}>Tangguhkan</CButton>
+                        <CButton disabled={item.status === 2} onClick={() => ValidasiSetujui(item.id)} className='mt-3' size="sm" color={'success'}>Setujui</CButton>
+                        <CButton disabled={item.status === 4 || item.status === 2} onClick={() => TangguhkanPengajuan(item.id)} className='mt-3 ml-3' size="sm" color={'danger'}>Tangguhkan</CButton>
                       </CCardBody>
                     </CCollapse>
                   )
