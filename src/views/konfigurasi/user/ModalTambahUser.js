@@ -89,6 +89,9 @@ const ModalTambahUserKomponent = ({Modal, ToggleModal, GetData, initialValues}) 
                   <TextForm label={'Pendidikan Terakhir'} name={'tingkat_pendidikan'} type={'text'}/>
                   <TextForm label={'Tahun Lulus'} name={'tahun_lulus_pendidikan'} type={'text'}/>
 
+                  <TextForm label={'TMT CPNS'} name={'tmt_cpns'} type={'date'}/>
+                  <TextForm label={'TMT PNS'} name={'tmt_pns'} type={'date'}/>
+
                   <TextForm label={'Jabatan Pegawai'} name={'jabatan'} type={'text'} />
                   <TextForm label={'TMT Jabatan'} name={'tmt_jabatan'} type={'date'}/>
                   <TextForm label={'Tgl. SK Jabatan'} name={'tanggal_sk_jabatan'}  type={'date'} />

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import {
   CWidgetDropdown,
   CRow,
@@ -11,15 +11,37 @@ import {
 import CIcon from '@coreui/icons-react'
 import ChartLineSimple from '../charts/ChartLineSimple'
 import ChartBarSimple from '../charts/ChartBarSimple'
+import {API} from "../../helper";
+import {GlobalContext} from "../../globalState";
 
 const WidgetsDropdown = () => {
+  const {AsyncToken} = useContext(GlobalContext)
+
+  const [InfoData, setInfoData] = useState({
+    sedang_cuti : 0,
+    total_pengajuan : 0
+  })
+
+  const GetInfoData = async () => {
+    API('get','api/beranda/info', null, AsyncToken)
+      .then(res => {
+        setInfoData(res.data.data)
+      }).catch(e => {
+        console.log(e)
+    })
+  }
+
+
+  useEffect(() => {
+    GetInfoData();
+  },[])
   // render
   return (
     <CRow>
       <CCol sm="6" lg="3">
         <CWidgetDropdown
           color="gradient-primary"
-          header="5 Orang"
+          header={`${InfoData.sedang_cuti} Orang`}
           text="Pegawai Sedang Cuti"
           footerSlot={
             <ChartLineSimple
@@ -50,8 +72,8 @@ const WidgetsDropdown = () => {
       <CCol sm="6" lg="3">
         <CWidgetDropdown
           color="gradient-info"
-          header="56 Pengajuan"
-          text="Jumlah Pengajuan Pegawai"
+          header={`${InfoData.total_pengajuan} Pengajuan`}
+          text="Total Pengajuan Cuti"
           footerSlot={
             <ChartLineSimple
               pointed
@@ -81,8 +103,37 @@ const WidgetsDropdown = () => {
 
       <CCol sm="6" lg="3">
         <CWidgetDropdown
+          color="gradient-danger"
+          header={`${InfoData.pengajuan_pending} Pengajuan`}
+          text="Masih Pending"
+          footerSlot={
+            <ChartBarSimple
+              className="mt-3 mx-3"
+              style={{height: '70px'}}
+              backgroundColor="rgb(250, 152, 152)"
+              label="Members"
+              labels="months"
+            />
+          }
+        >
+          <CDropdown>
+            <CDropdownToggle caret className="text-white" color="transparent">
+              <CIcon name="cil-settings"/>
+            </CDropdownToggle>
+            <CDropdownMenu className="pt-0" placement="bottom-end">
+              <CDropdownItem>Action</CDropdownItem>
+              <CDropdownItem>Another action</CDropdownItem>
+              <CDropdownItem>Something else here...</CDropdownItem>
+              <CDropdownItem disabled>Disabled action</CDropdownItem>
+            </CDropdownMenu>
+          </CDropdown>
+        </CWidgetDropdown>
+      </CCol>
+
+      <CCol sm="6" lg="3">
+        <CWidgetDropdown
           color="gradient-warning"
-          header="32 Orang"
+          header={`${InfoData.total_pegawai} Orang`}
           text="Jumlah Pegawai"
           footerSlot={
             <ChartLineSimple
@@ -99,35 +150,6 @@ const WidgetsDropdown = () => {
         >
           <CDropdown>
             <CDropdownToggle color="transparent">
-              <CIcon name="cil-settings"/>
-            </CDropdownToggle>
-            <CDropdownMenu className="pt-0" placement="bottom-end">
-              <CDropdownItem>Action</CDropdownItem>
-              <CDropdownItem>Another action</CDropdownItem>
-              <CDropdownItem>Something else here...</CDropdownItem>
-              <CDropdownItem disabled>Disabled action</CDropdownItem>
-            </CDropdownMenu>
-          </CDropdown>
-        </CWidgetDropdown>
-      </CCol>
-
-      <CCol sm="6" lg="3">
-        <CWidgetDropdown
-          color="gradient-danger"
-          header="5 Pengajuan"
-          text="Belum di ACC"
-          footerSlot={
-            <ChartBarSimple
-              className="mt-3 mx-3"
-              style={{height: '70px'}}
-              backgroundColor="rgb(250, 152, 152)"
-              label="Members"
-              labels="months"
-            />
-          }
-        >
-          <CDropdown>
-            <CDropdownToggle caret className="text-white" color="transparent">
               <CIcon name="cil-settings"/>
             </CDropdownToggle>
             <CDropdownMenu className="pt-0" placement="bottom-end">

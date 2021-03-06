@@ -1,4 +1,4 @@
-import React, {useEffect, useState, createContext} from 'react';
+import React, {useEffect, useState, createContext, useCallback} from 'react';
 import axios from "axios";
 import {API} from "./helper";
 export const GlobalContext = createContext();
@@ -8,9 +8,11 @@ export const GlobalProvider = ({children}) => {
 
   const [Loading, setLoading] = useState(true);
   const [User, setUser] = useState({});
+  const [DataKenaikanPangkat, setDataKenaikanPangkat] = useState([])
   const [ListUser, setListUser] = useState([]);
   const [Konfig, setKonfig] = useState({});
   const [AsyncToken, setAsyncToken] = useState(null);
+
 
   const GetListUser = async (Token) => {
     await API('get','api/user', null, Token).then(res => {
@@ -19,6 +21,16 @@ export const GlobalProvider = ({children}) => {
       console.log(err)
     })
   }
+
+  const GetKenaikanPangkat = useCallback((Token) => {
+    API('get','api/user/kenaikan-pangkat', null, Token)
+      .then(res => {
+        setDataKenaikanPangkat(res.data)
+        console.log(res.data)
+      }).catch(err => {
+      console.log(err)
+    })
+  }, [])
 
 
   const CheckApakahLogin = async (Token) => {
@@ -35,6 +47,7 @@ export const GlobalProvider = ({children}) => {
         setUser(res.data.data)
         setKonfig(res.data.konfig)
         GetListUser(Token);
+        GetKenaikanPangkat(Token);
       }).catch(e => {
         console.log(e)
       })
@@ -46,7 +59,7 @@ export const GlobalProvider = ({children}) => {
     CheckApakahLogin(Token);
   }, [])
 
-  const GlobalState = {Loading, CheckApakahLogin, User, ListUser, GetListUser, Konfig, AsyncToken}
+  const GlobalState = {Loading, CheckApakahLogin, User, ListUser, GetListUser, Konfig, AsyncToken, DataKenaikanPangkat, GetKenaikanPangkat}
 
   return(
     <GlobalContext.Provider value={GlobalState}>

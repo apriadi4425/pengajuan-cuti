@@ -21,6 +21,7 @@ const UserAdminKomponent = () => {
 
 
   const [initialValues, setinitialValues] = useState(null)
+  const [initialValues2, setinitialValues2] = useState(null)
 
   const [Modal,ToggleModal] = CustomModal();
   const [ModalEdit, ToggleModalEdit] = CustomModal();
@@ -147,7 +148,7 @@ const UserAdminKomponent = () => {
                                 NewData[items.tahun] = items.sisa;
                               }
                             })
-                            setinitialValues(NewData)
+                            setinitialValues2(NewData)
                             ToggleModalSetStateModalSaldoCUti();
                         }} size="sm" color="success">
                           Set Saldo Awal Cuti
@@ -169,10 +170,16 @@ const UserAdminKomponent = () => {
       {
         initialValues !== null ?
           <React.Fragment>
-            <ModalSetSaldoAwalCuti Modal={StateModalSaldoCUti} ToggleModal={ToggleModalSetStateModalSaldoCUti} GetData={GetData} initialValues={initialValues}/>
             <ModalTambahUser Modal={ModalEdit} ToggleModal={ToggleModalEdit} GetData={GetData} initialValues={initialValues}/>
           </React.Fragment>
            : null
+      }
+      {
+        initialValues2 !== null ?
+          <React.Fragment>
+            <ModalSetSaldoAwalCuti Modal={StateModalSaldoCUti} ToggleModal={ToggleModalSetStateModalSaldoCUti} GetData={GetData} initialValues={initialValues2}/>
+          </React.Fragment>
+          : null
       }
 
     </>
