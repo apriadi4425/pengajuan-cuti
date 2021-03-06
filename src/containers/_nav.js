@@ -6,13 +6,19 @@ import Icon from 'awesome-react-icons';
 const _nav =  [
   {
     _tag: 'CSidebarNavItem',
-    name: 'Dashboard',
+    name: 'Beranda Depan',
     to: '/dashboard',
     icon: <CIcon name="cil-speedometer" customClasses="c-sidebar-nav-icon"/>,
-    badge: {
-      color: 'info',
-      text: 'NEW',
-    }
+  },
+  {
+    _tag: 'CSidebarNavTitle',
+    _children: ['Master Data']
+  },
+  {
+    _tag: 'CSidebarNavItem',
+    name: 'Pengajuan Cuti',
+    to: '/master/pengajuan-cuti',
+    icon: <Icon name="user" className='mr-3'/>,
   },
   {
     _tag: 'CSidebarNavTitle',

@@ -26,6 +26,8 @@ export const InitialValues = {
   tmt_jabatan: '',
   tanggal_sk_jabatan: '',
   nomor_sk_jabatan: '',
+  atasan_langsung: '',
+  nomor_telpon : '',
 }
 
 export const SignupSchema = Yup.object().shape({
@@ -43,6 +45,8 @@ export const SignupSchema = Yup.object().shape({
   email: Yup.string()
     .email('Email Tidak Semestinya')
     .required('Email Harus diisi'),
+  atasan_langsung : Yup.string()
+    .required('Harus dipilih'),
   password: Yup.string().required('Password harus diisi'),
   c_password: Yup.string()
     .oneOf([Yup.ref('password'), null], 'Konfirmasi Password tidak cocok')
