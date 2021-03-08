@@ -14,6 +14,15 @@ export const fields = [
   }
 ]
 
+export const fields2 = [
+  { key: 'nama', label : 'Nama', _style: { width: '15%'} },
+  { key: 'jenis_cuti', label : 'Jenis Cuti', _style: { width: '15%'} },
+  { key: 'tanggal_pengajuan', label : 'Tgl Pengajuan', _style: { width: '13%'} },
+  { key: 'lama_cuti', label : 'Lama Cuti', _style: { width: '20%'} },
+  { key: 'status', label : 'Status', _style: { width: '10%'} },
+  { key: 'dokument', label : 'Dokument', _style: { width: '10%'} },
+]
+
 export const fieldsUser = [
   { key: 'jenis_cuti', label : 'Jenis Cuti', _style: { width: '15%'} },
   { key: 'alasan_cuti', label : 'Alasan Cuti', _style: { width: '25%'} },

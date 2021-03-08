@@ -17,6 +17,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import Helper from './helper';
 import {GlobalContext} from "../../../../globalState";
 import {API} from "../../../../helper";
+import swal from 'sweetalert';
 
 const TextForm = (props) => {
   return(
@@ -41,7 +42,27 @@ const ModalPengajuanCuti = ({Modal, ToggleModal, GetData}) => {
         ToggleModal();
       }).catch(err => {
         if(err.response.status){
-          setFieldError(err.response.data.data.message[0].path, err.response.data.data.message[0].message)
+          if(err.response.status === 501){
+            swal({
+              title: "Error",
+              text: "Anda Telah Mengajukan Cuti dan sedang cuti",
+              icon: "error",
+            });
+          }else if(err.response.status === 502){
+            swal({
+              title: "Error",
+              text: "Silahkan tunggu hingga pengajuan anda di ACC",
+              icon: "error",
+            });
+          }else if(err.response.status === 503){
+            swal({
+              title: "Error",
+              text: "Pengajuan Anda sudah di acc",
+              icon: "error",
+            });
+          }else{
+            setFieldError(err.response.data.data.message[0].path, err.response.data.data.message[0].message)
+          }
         }
       })
   }

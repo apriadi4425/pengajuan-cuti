@@ -25,6 +25,12 @@ const _nav =  [
     icon: <Icon name="user" className='mr-3'/>,
   },
   {
+    _tag: 'CSidebarNavItem',
+    name: 'Master Data Cuti',
+    to: '/master/data-cuti',
+    icon: <Icon name="book" className='mr-3'/>,
+  },
+  {
     _tag: 'CSidebarNavTitle',
     _children: ['Konfigurasi']
   },

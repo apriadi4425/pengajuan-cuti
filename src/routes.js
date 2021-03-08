@@ -41,12 +41,14 @@ const User = React.lazy(() => import('./views/users/User'));
 
 const KonfigurasiUser = React.lazy(() => import('./views/konfigurasi/user'));
 const PengajuanUser = React.lazy(() => import('./views/master/pengajuan-cuti/index'));
+const MasterCuti = React.lazy(() => import('./views/master/master-cuti/index'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
 
   { path: '/master/pengajuan-cuti', name: 'Pengajuan Cuti', component: PengajuanUser },
+  { path: '/master/data-cuti', name: 'Master Cuti', component: MasterCuti },
 
 
   { path: '/konfigurasi/user', name: 'Konfigurasi Pegawai', component: KonfigurasiUser },
